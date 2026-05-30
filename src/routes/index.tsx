@@ -3,15 +3,37 @@ import { motion } from "framer-motion";
 import { ChevronDown, MapPin, Phone, UtensilsCrossed, Users, Store } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { FloatingMenuCta } from "@/components/FloatingMenuCta";
+
+const RESTAURANT_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: "Chillies Restaurant",
+  url: "https://www.chiliesgroup.com",
+  servesCuisine: ["Kerala", "Arabian", "Chinese"],
+  priceRange: "₹₹",
+  location: [
+    { "@type": "Place", name: "Pulikkalodi", telephone: "+917025222260" },
+    { "@type": "Place", name: "Anchachavidi", telephone: "+918943608000" },
+    { "@type": "Place", name: "Wandoor", telephone: "+918606186666" },
+    { "@type": "Place", name: "Thiruvali", telephone: "+916239100600" },
+  ],
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Chillies Restaurant — Deliciously Yours" },
-      { name: "description", content: "Kerala's beloved chain for Arabian Grill, Broast, Shawarma, Seafood & Biriyani. 4 branches across Malappuram." },
-      { property: "og:title", content: "Chillies Restaurant — Deliciously Yours" },
-      { property: "og:description", content: "Authentic Kerala-Arabian flavours, lovingly served." },
+      { title: "Chillies Restaurant Kerala — Arabian Grill, Broast & Biriyani" },
+      { name: "description", content: "Kerala's favourite restaurant chain. 4 branches in Malappuram — Pulikkalodi, Anchachavidi, Wandoor, Thiruvali. Known for Al Faham, Broast, Biriyani & Shawarma." },
+      { property: "og:title", content: "Chillies Restaurant Kerala — Arabian Grill, Broast & Biriyani" },
+      { property: "og:description", content: "Kerala's favourite restaurant chain serving Al Faham, Broast, Biriyani & Shawarma across 4 Malappuram branches." },
       { property: "og:image", content: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=1200" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(RESTAURANT_JSONLD),
+      },
     ],
   }),
   component: HomePage,
@@ -44,6 +66,7 @@ function HomePage() {
       <Branches />
       <Gallery />
       <Footer />
+      <FloatingMenuCta />
     </div>
   );
 }

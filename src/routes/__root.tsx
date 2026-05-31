@@ -7,7 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Flame } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -121,7 +123,75 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
+      <ScrollProgress />
+      <PageLoader />
       <Outlet />
     </QueryClientProvider>
+  );
+}
+
+function PageLoader() {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[rgb(20,8,5)]"
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: [0.9, 1.1, 1], opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex flex-col items-center gap-4 text-center px-4"
+          >
+            <div className="w-20 h-20 rounded-full bg-[#C0392B] grid place-items-center shadow-[0_0_40px_rgba(192,57,43,0.6)]">
+              <Flame size={44} className="text-white animate-pulse" />
+            </div>
+            <h1 className="font-display text-4xl font-bold text-[#FFF8F0] tracking-wider mt-4">
+              Chillies
+            </h1>
+            <div className="w-12 h-[2px] bg-primary/30 my-2" />
+            <p className="text-[#F39C12] tracking-[0.3em] text-xs uppercase font-medium">
+              Deliciously Yours
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function ScrollProgress() {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) {
+        setWidth(0);
+        return;
+      }
+      const scrolled = (window.scrollY / docHeight) * 100;
+      setWidth(scrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div
+      style={{ width: `${width}%` }}
+      className="fixed top-0 left-0 h-[3px] bg-[#C0392B] z-[9999] transition-all duration-75"
+    />
   );
 }
